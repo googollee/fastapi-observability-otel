@@ -38,17 +38,27 @@ processors:
         value: nas
         action: upsert
   resourcedetection:
-    detectors: [env, docker]
+    detectors: [system, docker]
     timeout: 2s
     override: false
+    system:
+      hostname_sources: ["os"]
+  resource/loki:
+    attributes:
+      - action: insert
+        key: host_name
+        from_attribute: host.name
+      - action: insert
+        key: loki.resources.labels
+        value: host_name
+      - action: insert
+        key: loki.format
+        value: raw
   attributes/loki:
     actions:
       - action: insert
         key: loki.attribute.labels
         value: container_name
-      - action: insert
-        key: loki.format
-        value: raw
   batch:
     timeout: 5s
     send_batch_size: 100000
@@ -86,5 +96,5 @@ service:
       exporters: [prometheus, file]
     logs:
       receivers: [fluentforward]
-      processors: [resourcedetection, attributes/loki, batch]
+      processors: [resourcedetection, resource/loki, attributes/loki, batch]
       exporters: [loki, file]
