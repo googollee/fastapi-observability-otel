@@ -37,6 +37,18 @@ processors:
       - key: host.name
         value: nas
         action: upsert
+  resourcedetection:
+    detectors: [env, docker]
+    timeout: 2s
+    override: false
+  attributes/loki:
+    actions:
+      - action: insert
+        key: loki.attribute.labels
+        value: container_name
+      - action: insert
+        key: loki.format
+        value: raw
   batch:
     timeout: 5s
     send_batch_size: 100000
@@ -56,6 +68,9 @@ exporters:
     tls:
       insecure: true
 
+  file:
+    path: /output/output.log
+
 service:
   # telemetry:
     # logs:
@@ -63,13 +78,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
+      processors: [resourcedetection, batch]
+      exporters: [otlp, file]
     metrics:
       receivers: [prometheus]
-      processors: [batch]
-      exporters: [prometheus]
+      processors: [resourcedetection, batch]
+      exporters: [prometheus, file]
     logs:
       receivers: [fluentforward]
-      processors: [batch]
-      exporters: [loki]
+      processors: [resourcedetection, attributes/loki, batch]
+      exporters: [loki, file]
