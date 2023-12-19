@@ -12,6 +12,7 @@ services:
       - "8006:8006"
       - "8006:8006/udp"
     depends_on:
+      - influxdb
       - loki
       - prometheus
       - tempo
@@ -87,15 +88,13 @@ services:
 
   influxdb:
     image: influxdb:2.7
-    command:
-      - /bin/sh
-      - -c
-      - |
-        influx bucket create -n bucket -r 2d
-    healthcheck:
-      test: "curl -f http://localhost:8086/ping || exit 1"
-      interval: 5s
-      timeout: 10s
-      retries: 5
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: user
+      DOCKER_INFLUXDB_INIT_PASSWORD: password
+      DOCKER_INFLUXDB_INIT_ORG: org
+      DOCKER_INFLUXDB_INIT_BUCKET: bucket
+      DOCKER_INFLUXDB_INIT_RETENTION: 3d
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: secret-auth-token
     ports:
       - "8086:8086"
