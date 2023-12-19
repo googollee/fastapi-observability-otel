@@ -35,20 +35,14 @@ Observe the FastAPI application with three pillars of observability on [Grafana]
 
 ## Quick Start
 
-1. Install [Loki Docker Driver](https://grafana.com/docs/loki/latest/clients/docker-driver/)
-
-   ```bash
-   docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
-   ```
-
-2. Build application image and start all services with docker-compose
+1. Build application image and start all services with docker-compose
 
    ```bash
    docker-compose build
    docker-compose up -d
    ```
 
-3. Send requests with [siege](https://linux.die.net/man/1/siege) and curl to the FastAPI app
+2. Send requests with [siege](https://linux.die.net/man/1/siege) and curl to the FastAPI app
 
    ```bash
    bash request-script.sh
@@ -68,7 +62,7 @@ Observe the FastAPI application with three pillars of observability on [Grafana]
    k6 run --vus 1 --duration 300s k6-script.js
    ```
 
-4. Check predefined dashboard `FastAPI Observability` on Grafana [http://localhost:3000/](http://localhost:3000/) login with `admin:admin`
+3. Check predefined dashboard `FastAPI Observability` on Grafana [http://localhost:3000/](http://localhost:3000/) login with `admin:admin`
 
    Dashboard screenshot:
 
@@ -371,25 +365,17 @@ editable: true
 
 Collect logs with Loki Docker Driver from all services.
 
-#### Loki Docker Driver
+#### Log Docker Driver
 
 1. Use [YAML anchor and alias](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) feature to set logging options for each service.
-2. Set [Loki Docker Driver options](https://grafana.com/docs/loki/latest/clients/docker-driver/configuration/)
-   1. loki-url: loki service endpoint
-   2. loki-pipeline-stages: processes multiline log from FastAPI application with multiline and regex stages ([reference](https://grafana.com/docs/loki/latest/clients/promtail/stages/multiline/))
+2. Set [Fluentd Docker Driver options](https://docs.docker.com/config/containers/logging/fluentd/)
+   1. fluentd-address: fluentforward service endpoint
 
 ```yaml
 x-logging: &default-logging # anchor(&): 'default-logging' for defines a chunk of configuration
-  driver: loki
+  driver: fluentd
   options:
-    loki-url: 'http://localhost:3100/api/prom/push'
-    loki-pipeline-stages: |
-      - multiline:
-          firstline: '^\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}'
-          max_wait_time: 3s
-      - regex:
-          expression: '^(?P<time>\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2},d{3}) (?P<message>(?s:.*))$$'
-# Use $$ (double-dollar sign) when your configuration needs a literal dollar sign.
+    fluentd-address: localhost:8006
 
 version: "3.4"
 
