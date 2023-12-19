@@ -78,8 +78,12 @@ exporters:
     tls:
       insecure: true
 
-  file:
-    path: /output/output.log
+  file/traces:
+    path: /output/traces.log
+  file/logs:
+    path: /output/logs.log
+  file/metrics:
+    path: /output/metrics.log
 
   influxdb:
     endpoint: http://influxdb:8086
@@ -102,12 +106,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, batch]
-      exporters: [otlp, influxdb, file]
+      exporters: [otlp, influxdb, file/traces]
     metrics:
       receivers: [prometheus]
       processors: [resourcedetection, batch]
-      exporters: [prometheus, influxdb, file]
+      exporters: [prometheus, influxdb, file/metrics]
     logs:
       receivers: [fluentforward]
       processors: [resourcedetection, resource/loki, attributes/loki, batch]
-      exporters: [loki, influxdb, file]
+      exporters: [loki, influxdb, file/logs]
