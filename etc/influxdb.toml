@@ -1,0 +1,9 @@
+[http]
+enabled = true
+bind-address = ":8086"
+auth-enabled = false
+log-enabled = false
+write-tracing = false
+pprof-enabled = false
+ping-auth-enabled = false
+https-enabled = false

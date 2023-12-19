@@ -84,3 +84,18 @@ services:
     depends_on:
       - otelcol
     logging: *default-logging
+
+  influxdb:
+    image: influxdb:2.7
+    command:
+      - /bin/sh
+      - -c
+      - |
+        influx bucket create -n bucket -r 2d
+    healthcheck:
+      test: "curl -f http://localhost:8086/ping || exit 1"
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "8086:8086"
