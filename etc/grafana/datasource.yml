@@ -19,11 +19,12 @@ datasources:
     basicAuth: false
     isDefault: true
     jsonData:
-      dbName: bucket
-      httpMode: GET
-      httpHeaderName1: 'Authorization'
+      version: Flux
+      organization: org
+      defaultBucket: bucket
+      tlsSkipVerify: true
     secureJsonData:
-      httpHeaderValue1: 'Token secret-auth-token'
+      token: secret-auth-token
     readOnly: false
     editable: true
   - uid: prometheus
