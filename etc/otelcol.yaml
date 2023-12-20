@@ -82,19 +82,6 @@ exporters:
   file/metrics:
     path: /output/metrics.log
 
-  influxdb:
-    endpoint: http://influxdb:8086
-    timeout: 10000ms
-    org: org
-    bucket: bucket
-    token: secret-auth-token
-    span_dimensions:
-      - service.name
-      - span.name
-    log_record_dimensions:
-      - container.name
-    metrics_schema: telegraf-prometheus-v1
-
 service:
   # telemetry:
     # logs:
@@ -103,12 +90,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, batch]
-      exporters: [otlp, influxdb, file/traces]
+      exporters: [otlp, file/traces]
     metrics:
       receivers: [prometheus]
       processors: [resourcedetection, batch]
-      exporters: [prometheus, influxdb, file/metrics]
+      exporters: [prometheus, file/metrics]
     logs:
       receivers: [fluentforward]
       processors: [resourcedetection, attributes/fluentforward, resource/loki, attributes/loki, batch]
-      exporters: [loki, influxdb, file/logs]
+      exporters: [loki, file/logs]

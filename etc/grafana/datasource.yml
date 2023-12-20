@@ -10,22 +10,6 @@ deleteDatasources:
 # what's available in the database
 datasources:
   # <string, required> name of the datasource. Required
-  - uid: influxdb
-    orgId: 1
-    name: InfluxDB
-    type: influxdb
-    access: proxy
-    url: http://influxdb:8086
-    basicAuth: false
-    isDefault: true
-    jsonData:
-      dbName: bucket
-      httpMode: GET
-      httpHeaderName1: 'Authorization'
-    secureJsonData:
-      httpHeaderValue1: 'Token secret-auth-token'
-    readOnly: false
-    editable: true
   - uid: prometheus
     orgId: 1
     name: Prometheus
