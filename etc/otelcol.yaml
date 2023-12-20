@@ -27,22 +27,19 @@ receivers:
             - targets: ['app-c:8000']
 
 processors:
-  resource/router:
-    attributes:
-      - key: host.name
-        value: router
-        action: upsert
-  resource/nas:
-    attributes:
-      - key: host.name
-        value: nas
-        action: upsert
   resourcedetection:
     detectors: [system, docker]
     timeout: 2s
     override: false
     system:
       hostname_sources: ["os"]
+  attributes/fluentforward:
+    actions:
+      - action: extract
+        key: container_name
+        pattern: ^/fastapi-observability(?P<tmp>-otel)?-(?P<service_name>.*)$
+      - action: delete
+        key: tmp
   resource/loki:
     attributes:
       - action: insert
@@ -58,7 +55,7 @@ processors:
     actions:
       - action: insert
         key: loki.attribute.labels
-        value: container_name
+        value: service_name,container_name
   batch:
     timeout: 5s
     send_batch_size: 100000
@@ -113,5 +110,5 @@ service:
       exporters: [prometheus, influxdb, file/metrics]
     logs:
       receivers: [fluentforward]
-      processors: [resourcedetection, resource/loki, attributes/loki, batch]
+      processors: [resourcedetection, attributes/fluentforward, resource/loki, attributes/loki, batch]
       exporters: [loki, influxdb, file/logs]
