@@ -29,8 +29,8 @@
   "panels": [
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -67,17 +67,22 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto",
-        "wideLayout": true
+        "textMode": "auto"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "query": "from(bucket: \"bucket\")\n  |> range(start: ${__from:date}, stop: ${__to:date})\n  |> filter(fn: (r) => r._measurement == \"fastapi_requests_total\")\n  |> filter(fn: (r) => r.app_name == \"${app_name}\")\n  |> filter(fn: (r) => r.path != \"/metrics\")\n  |> filter(fn: (r) => r._field == \"counter\")\n  |> keep(columns: [\"_time\", \"_value\", \"method\", \"path\"])\n  |> fill(usePrevious: true)\n  |> aggregateWindow(every: $__interval, fn: last)\n  |> group(columns: [\"_time\"])\n  |> sum()\n  |> group()",
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum(fastapi_requests_total{app_name=\"$app_name\", path!=\"/metrics\"})",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -104,8 +109,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -142,17 +147,22 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name",
-        "wideLayout": true
+        "textMode": "value_and_name"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "query": "from(bucket: \"bucket\")\n  |> range(start: ${__from:date}, stop: ${__to:date})\n  |> filter(fn: (r) => r._measurement == \"fastapi_requests_total\")\n  |> filter(fn: (r) => r.app_name == \"${app_name}\")\n  |> filter(fn: (r) => r.path != \"/metrics\")\n  |> filter(fn: (r) => r._field == \"counter\")\n  |> map(fn: (r) => ({r with _field: r.method+\" \"+r.path}))\n  |> keep(columns: [\"_time\", \"_value\", \"_field\"])\n  |> fill(usePrevious: true)\n  |> aggregateWindow(every: $__interval, fn: last)\n",
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "fastapi_requests_total{app_name=\"$app_name\", path!=\"/metrics\"}",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{method}} {{path}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -224,7 +234,6 @@
         "displayMode": "lcd",
         "minVizHeight": 10,
         "minVizWidth": 0,
-        "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -236,7 +245,7 @@
         "showUnfilled": true,
         "valueMode": "color"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "datasource": {
@@ -255,8 +264,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -299,17 +308,19 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto",
-        "wideLayout": true
+        "textMode": "auto"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "query": "from(bucket: \"bucket\")\n  |> range(start: ${__from:date}, stop: ${__to:date})\n  |> filter(fn: (r) => r._measurement == \"fastapi_exceptions_total\")\n  |> filter(fn: (r) => r.app_name == \"${app_name}\")\n  |> filter(fn: (r) => r._field == \"counter\")\n  |> keep(columns: [\"_time\", \"_value\", \"method\", \"path\"])\n  |> fill(usePrevious: true)\n  |> aggregateWindow(every: $__interval, fn: last)\n  |> group(columns: [\"_time\"])\n  |> sum()\n  |> group()",
+          "exemplar": true,
+          "expr": "fastapi_exceptions_total{app_name=\"$app_name\"}",
+          "interval": "",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -328,7 +339,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -424,7 +434,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -520,7 +529,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -615,7 +623,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -709,7 +716,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -804,7 +810,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -972,6 +977,7 @@
   ],
   "refresh": "5s",
   "schemaVersion": 38,
+  "style": "dark",
   "tags": [],
   "templating": {
     "list": [
