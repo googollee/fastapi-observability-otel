@@ -30,13 +30,10 @@ processors:
     override: false
     system:
       hostname_sources: ["os"]
-  attributes/fluentforward:
-    actions:
-      - action: extract
-        key: container_name
-        pattern: ^/fastapi-observability(?P<tmp>-otel)?-(?P<service_name>.*)$
-      - action: delete
-        key: tmp
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 40
+    spike_limit_percentage: 25
   resource/loki:
     attributes:
       - action: insert
@@ -52,7 +49,7 @@ processors:
     actions:
       - action: insert
         key: loki.attribute.labels
-        value: service_name,container_name
+        value: container_name
   batch:
     timeout: 5s
     send_batch_size: 100000
@@ -88,13 +85,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, batch]
+      processors: [memory_limiter, resourcedetection, batch]
       exporters: [otlp, file/traces]
     metrics:
       receivers: [prometheus]
-      processors: [resourcedetection, batch]
+      processors: [memory_limiter, resourcedetection, batch]
       exporters: [prometheusremotewrite, file/metrics]
     logs:
       receivers: [fluentforward]
-      processors: [resourcedetection, attributes/fluentforward, resource/loki, attributes/loki, batch]
+      processors: [memory_limiter, resourcedetection, resource/loki, attributes/loki, batch]
       exporters: [loki, file/logs]

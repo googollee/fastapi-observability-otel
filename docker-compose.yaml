@@ -21,6 +21,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   app-a:
+    container_name: app-a
     build: ./fastapi_app/
     ports:
       - "8000:8000"
@@ -31,6 +32,7 @@ services:
     logging: *default-logging
 
   app-b:
+    container_name: app-b
     build: ./fastapi_app/
     ports:
       - "8001:8000"
@@ -41,6 +43,7 @@ services:
     logging: *default-logging
 
   app-c:
+    container_name: app-c
     build: ./fastapi_app_plain/
     ports:
       - "8002:8000"
