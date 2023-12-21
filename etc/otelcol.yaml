@@ -47,9 +47,12 @@ processors:
         value: raw
   attributes/loki:
     actions:
+      - action: extract
+        key: container_name
+        pattern: ^/(?P<compose_service>.*)$
       - action: insert
         key: loki.attribute.labels
-        value: container_name
+        value: compose_service
   batch:
     timeout: 5s
     send_batch_size: 100000
