@@ -21,7 +21,7 @@ datasources:
     user: ''
     database: ''
     basicAuth: false
-    isDefault: false
+    isDefault: true
     jsonData:
       exemplarTraceIdDestinations:
         - datasourceUid: tempo
