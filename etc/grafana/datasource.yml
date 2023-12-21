@@ -50,6 +50,8 @@ datasources:
         datasourceUid: loki
       tracesToLogs:
         datasourceUid: loki
+        spanStartTimeShift: '10m'
+        spanEndTimeShift: '-10m'
         filterBySpanID: false
         filterByTraceID: true
         mapTagNamesEnabled: false
