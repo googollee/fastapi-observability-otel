@@ -34,6 +34,12 @@ processors:
     check_interval: 5s
     limit_percentage: 40
     spike_limit_percentage: 25
+  transform/log:
+    log_statements:
+      - context: log
+        statements:
+          - set(span_id.string, ExtractPatterns(body, "span_id=(?P<v>[a-zA-Z0-9]*)")["v"])
+          - set(trace_id.string, ExtractPatterns(body, "trace_id=(?P<v>[a-zA-Z0-9]*)")["v"])
   resource/loki:
     attributes:
       - action: insert
@@ -96,5 +102,5 @@ service:
       exporters: [prometheusremotewrite, file/metrics]
     logs:
       receivers: [fluentforward]
-      processors: [memory_limiter, resourcedetection, resource/loki, attributes/loki, batch]
+      processors: [memory_limiter, resourcedetection, transform/log, resource/loki, attributes/loki, batch]
       exporters: [loki, file/logs]
